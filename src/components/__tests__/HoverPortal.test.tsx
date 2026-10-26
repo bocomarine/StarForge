@@ -32,6 +32,12 @@ function installRectMocks(anchor: Partial<DOMRect>, panel: Partial<DOMRect>) {
   );
 }
 
+function getPanel(): HTMLElement {
+  const panel = document.body.querySelector('.test-panel');
+  if (!panel) throw new Error('panel portal element not found');
+  return panel as HTMLElement;
+}
+
 function Harness({ open }: { open: boolean }) {
   const anchorRef = useRef<HTMLDivElement>(null);
   return (
@@ -62,7 +68,7 @@ describe('HoverPortal', () => {
     render(<Harness open />);
     // panelLeft = anchorRight(120) - panelWidth(400) = -280 < VIEWPORT_PADDING(8)
     // → clamped right edge = 8 + 400 = 408 → right offset = innerWidth(1024) - 408 = 616
-    expect(screen.getByText('panel content')).toHaveStyle({ right: '616px' });
+    expect(getPanel()).toHaveStyle({ right: '616px' });
   });
 
   it('keeps default right alignment when the panel fits on screen', () => {
@@ -73,6 +79,6 @@ describe('HoverPortal', () => {
     render(<Harness open />);
     // panelLeft(300) >= VIEWPORT_PADDING(8) → right edge stays at anchor right(700)
     // → right offset = innerWidth(1024) - 700 = 324
-    expect(screen.getByText('panel content')).toHaveStyle({ right: '324px' });
+    expect(getPanel()).toHaveStyle({ right: '324px' });
   });
 });
